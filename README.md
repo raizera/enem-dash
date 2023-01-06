@@ -7,7 +7,7 @@ O objetivo é identificar se há relações entre questões sociais e os candida
 O arquivo csv é muito grande, então ainda estou procurando modos de realizar o deploy.
 <br>
 <br>
-requirments:
+requirements:
 
 pip install dash
 <br>

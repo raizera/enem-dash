@@ -1,11 +1,13 @@
 import dash_bootstrap_components as dbc
+import numpy as np
 import plotly.express as px
+import plotly.figure_factory as ff
 import plotly.graph_objects as go
 from dash import Dash, Input, Output, dcc, html
-from plotly.subplots import make_subplots
 
 from data import (cor_raca, df, fig_01, fig_02, fig_03, fig_04, fig_05, fig_06,
-                  fig_07, fig_08, fig_09, fig_10, fig_11, fig_x, presenca)
+                  fig_07, fig_08, fig_09, fig_10, fig_11, fig_13, fig_14,
+                  fig_15, fig_x, group_labels, hist_data, presenca)
 
 app = Dash(__name__)
 
@@ -14,20 +16,20 @@ app.layout = html.Div(className='row', children=[
     html.H2(children='Perfil socio-cultural-econômico'),
     dcc.Markdown('''
                 [fonte de dados](https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem)
-                
+
                 Abaixo você encontra gráficos com características sociais, como cor-raça, tipo de escola,
                 sexo e situação do ensino.
-                Todos os gráficos mostram essas características relacionadas à outras, como faixa etária dos participantes do exame.
-                Escolha uma faiza etária por meio do botão dropdown acima de cada gráfico. Se deseja comparar mais de 
-                uma faixa etária, use a legenda ao lado de cada gráfico.
+                Todos os gráficos mostram essas características relacionadas à outras, como faixa_etaria dos participantes do exame.
+                Escolha uma faiza etária por meio do botão dropdown acima de cada gráfico. Se deseja comparar mais de
+                uma faixa_etaria, use a legenda ao lado de cada gráfico.
                 Aproveite e utilize o zoom e outras funcinalidades que o gráfico pode oferecer, inclusive salvar e baixar imagens de suas análises.
                 **Por meio desta análise, espera-se determinar quais fatores são significativos para justificar a ausência dos candidatos ao ENEM 2020.**
                 '''),
-    html.H2(children='Panorama geral Cor-raça com relação à faixa etária, tipo de escola, sexo e a escolaridade dos inscritos no exame:'),
+    html.H2(children='Panorama geral Cor-raça com relação à faixa_etaria, tipo de escola, sexo e a escolaridade dos inscritos no exame:'),
 
     dcc.Tabs([
 
-        dcc.Tab(label='Cor-Raça x Faixa etária', children=[
+        dcc.Tab(label='Cor-Raça x faixa_etaria', children=[
             dcc.Dropdown(presenca, value='todos os candidatos',
                          id='situacao_01'),
             dcc.Graph(
@@ -35,14 +37,14 @@ app.layout = html.Div(className='row', children=[
                 figure=fig_01
             ),
             dcc.Markdown('''
-No gráfico **Raça-Cor x Faixa Etária**, observa-se que a maior parcela
+No gráfico **Raça-Cor x faixa_etaria**, observa-se que a maior parcela
 de estudantes são classificadas como pardas. Os candidatos classificados como brancos
 são a segunda maior parte de participantes do exame. Entre esses, a maior parte
-de estudantes estão na faixa etária entre 17 e 20 anos de idade. Esse número volta a ser relevante
-na faixa etária entre 26 e 30 anos. Talvez esse fato seja explicado pela de mudança de carreira
-e/ou segunda graduação. O total de candidatos entre 17 e 20 anos é 2.693.113 e a porcentagem de 
+de estudantes estão na faixa_etaria entre 17 e 20 anos de idade. Esse número volta a ser relevante
+na faixa_etaria entre 26 e 30 anos. Talvez esse fato seja explicado pela de mudança de carreira
+e/ou segunda graduação. O total de candidatos entre 17 e 20 anos é 2.693.113 e a porcentagem de
 participantes nessa condição, em relção ao total, representa 46.57 %.
-Fica evidente que o grupo que mais participa do exame é representado pelos que se declaram pardos e também os brancos nessa ordem, e depois os que se declaram pretos. Nesse, a maior parte dos candidatos encontram-se na faixa etária entre 17 e 18 anos.
+Fica evidente que o grupo que mais participa do exame é representado pelos que se declaram pardos e também os brancos nessa ordem, e depois os que se declaram pretos. Nesse, a maior parte dos candidatos encontram-se na faixa_etaria entre 17 e 18 anos.
 '''
                          ),
         ]),
@@ -93,7 +95,7 @@ Fica evidente que o grupo que mais participa do exame é representado pelos que 
 
     dcc.Tabs([
 
-        dcc.Tab(label="sexo + faixa etária: histogram", children=[
+        dcc.Tab(label="sexo + faixa_etaria: histogram", children=[
                 dcc.Dropdown(presenca, value='todos os candidatos',
                              id='situacao_05'),
 
@@ -102,20 +104,20 @@ Fica evidente que o grupo que mais participa do exame é representado pelos que 
                     figure=fig_05,
                 ),
                 dcc.Markdown('''
-                Nesta análise, considerou-se ausentes aqueles que faltaram em algum dia de provas. No primeiro dia, o número de ausentes foi de 3.024.590. 
+                Nesta análise, considerou-se ausentes aqueles que faltaram em algum dia de provas. No primeiro dia, o número de ausentes foi de 3.024.590.
                 O número máximo de ausentes foi de 3.184.243 candiatos que representa o número de ausentes no segundo dia de prova.
                 Esse total de ausentes representa 55.06 % em relação ao total de candidatos (masculino + feminino). Analisando o gráfico é possível evidenciar que há uma diferença significativa
                 entre o sexo masculino e feminino. O número de candidatas do sexo feminino ausentes foi 1.899.443 e o número de candidatos do sexo masculino foi de
                 1.284.800, ou seja, o exame contou com um total de 539.866 candidatas do sexo feminino ausentes a mais em relação aos do sexo masculino.
                 O número de candidatas do sexo feminino ausentes no segundo dia do exame foi de 1.899.443 que reprenta 32.84 % do total de candidatos inscritos no exame, e as candidatas do sexo feminino ausentes no segundo dia do exame representam 54.76 % em relação ao total de candidatas do mesmo grupo, istp é, em relação ao total de candidatas do sexo feminino.
                 Com relação aos candidatos do sexo masculino, os ausentes no segundo dia do exame representam 1.284.800 do total, que reprenta 22.22 % do total de candidatos inscritos e 55.52 % em relação ao total de candidatos do sexo masculino.
-                Há um crescimento importante na faixa etária entre 26 e 30 anos. Este fato pode ser explicado por ser uma faixa etária que busca uma segunda formação, uma decisão por mudança de carreira ou até aqueles que se evadiram do primeiro curso de graduação.
-                Uma constatação sobre candidatos eliminados ocorre a partir da faixa etária de 19 anos em que há mais candidatos e candidatas eliminados do que presentes.
+                Há um crescimento importante na faixa_etaria entre 26 e 30 anos. Este fato pode ser explicado por ser uma faixa_etaria que busca uma segunda formação, uma decisão por mudança de carreira ou até aqueles que se evadiram do primeiro curso de graduação.
+                Uma constatação sobre candidatos eliminados ocorre a partir da faixa_etaria de 19 anos em que há mais candidatos e candidatas eliminados do que presentes.
                 '''),
                 ]
                 ),
 
-        dcc.Tab(label='sexo + faixa etária: scatter', children=[
+        dcc.Tab(label='sexo + faixa_etaria: scatter', children=[
             dcc.Dropdown(presenca, value='todos os candidatos',
                          id='situacao_06'),
             dcc.Graph(
@@ -125,7 +127,7 @@ Fica evidente que o grupo que mais participa do exame é representado pelos que 
         ]
         ),
 
-        dcc.Tab(label='cor-raça + faixa etária: histogram', children=[
+        dcc.Tab(label='cor-raça + faixa_etaria: histogram', children=[
             dcc.Dropdown(presenca, value='todos os candidatos',
                          id='situacao_08'),
             dcc.Graph(
@@ -176,6 +178,27 @@ Fica evidente que o grupo que mais participa do exame é representado pelos que 
             figure=fig_x
         ),
     ]),
+
+    dcc.Tab(label="Histogram", children=[
+        dcc.Dropdown(presenca, value='todos os candidatos',
+                     id='situacao_13'),
+
+        dcc.Graph(
+            id='grafico_13',
+            figure=fig_13,
+        ),
+    ]
+    ),
+
+    dcc.Tab(label="Histogram", children=[
+        dcc.Dropdown(presenca, value='todos os candidatos',
+                     id='situacao_14'),
+        dcc.Graph(
+            id='grafico_14',
+            figure=fig_14,
+        ),
+    ]
+    ),
 ])
 
 
@@ -185,11 +208,11 @@ Fica evidente que o grupo que mais participa do exame é representado pelos que 
 )
 def update_output_div_01(value):
     if value == "todos os candidatos":
-        fig_01 = px.histogram(df, x="cor-raça", y=0, color="faixa etária")
+        fig_01 = px.histogram(df, x="cor-raça", y=0, color="faixa_etaria")
     else:
-        tabela_filtrada = df.loc[df['faixa etária'] == value, :]
+        tabela_filtrada = df.loc[df['faixa_etaria'] == value, :]
         fig_01 = px.histogram(tabela_filtrada, x="cor-raça",
-                              y=0, color="faixa etária")
+                              y=0, color="faixa_etaria")
     return fig_01
 
 
@@ -255,11 +278,11 @@ def update_output_div_02(value):
 )
 def update_output_div_05(value):
     if value == "todos os candidatos":
-        fig_05 = px.histogram(df, x="faixa etária", y=0,
+        fig_05 = px.histogram(df, x="faixa_etaria", y=0,
                               color="sexo", pattern_shape="presença")
     else:
-        tabela_filtrada = df.loc[df['faixa etária'] == value, :]
-        fig_05 = px.histogram(tabela_filtrada, x="faixa etária",
+        tabela_filtrada = df.loc[df['faixa_etaria'] == value, :]
+        fig_05 = px.histogram(tabela_filtrada, x="faixa_etaria",
                               y=0, color="sexo", pattern_shape="presença")
     return fig_05
 
@@ -270,23 +293,23 @@ def update_output_div_05(value):
 )
 def update_output_div_06(value):
     if value == "todos os candidatos":
-        fig_06 = px.scatter(df, x="faixa etária", y=0, color="sexo", marginal_x="box", marginal_y="rug",
+        fig_06 = px.scatter(df, x="faixa_etaria", y=0, color="sexo", marginal_x="box", marginal_y="rug",
 
                             title="",
 
                             labels={
-                                'faixa etária': 'Faixa Etária',
+                                'faixa_etaria': 'faixa_etaria',
                                 '0': 'Candidados'
                             }
                             )
     else:
-        tabela_filtrada = df.loc[df['faixa etária'] == value, :]
-        fig_06 = px.scatter(tabela_filtrada, x="faixa etária", y=0, color="sexo", marginal_x="box", marginal_y="rug",
+        tabela_filtrada = df.loc[df['faixa_etaria'] == value, :]
+        fig_06 = px.scatter(tabela_filtrada, x="faixa_etaria", y=0, color="sexo", marginal_x="box", marginal_y="rug",
 
                             title="TÍTULO",
 
                             labels={
-                                'faixa etária': 'Faixa Etária',
+                                'faixa_etaria': 'faixa_etaria',
                                 '0': 'Candidados'
                             }
                             )
@@ -299,19 +322,19 @@ def update_output_div_06(value):
 # )
 # def update_output_div_07(value):
 #     if value == "todos os candidatos":
-#         fig_07 = px.histogram(df, x="faixa etária", y=0, color="sexo",
+#         fig_07 = px.histogram(df, x="faixa_etaria", y=0, color="sexo",
 #                               title="TÍTULO",
 #                               labels={
-#                                   'faixa etária': 'Faixa Etária',
+#                                   'faixa_etaria': 'faixa_etaria',
 #                                   '0': 'Candidatos'
 #                               }
 #                               )
 #     else:
-#         tabela_filtrada = df.loc[df['faixa etária'] == value, :]
-#         fig_07 = px.histogram(tabela_filtrada, x="faixa etária", y=0, color="sexo",
+#         tabela_filtrada = df.loc[df['faixa_etaria'] == value, :]
+#         fig_07 = px.histogram(tabela_filtrada, x="faixa_etaria", y=0, color="sexo",
 #                               title="TÍTULO",
 #                               labels={
-#                                   'faixa etária': 'Faixa Etária',
+#                                   'faixa_etaria': 'faixa_etaria',
 #                                   '0': 'Candidatos'
 #                               }
 #                               )
@@ -322,23 +345,23 @@ def update_output_div_06(value):
 )
 def update_output_div_08(value):
     if value == "todos os candidatos":
-        fig_08 = px.histogram(df, x="faixa etária", y=0, color="cor-raça",
+        fig_08 = px.histogram(df, x="faixa_etaria", y=0, color="cor-raça",
 
                               title="Título",
 
                               labels={
-                                  'faixa etária': 'Faixa Etária',
+                                  'faixa_etaria': 'faixa_etaria',
                                   '0': 'Candidatos'
                               }
                               )
     else:
-        tabela_filtrada = df.loc[df['faixa etária'] == value, :]
-        fig_08 = px.histogram(tabela_filtrada, x="faixa etária", y=0, color="cor-raça",
+        tabela_filtrada = df.loc[df['faixa_etaria'] == value, :]
+        fig_08 = px.histogram(tabela_filtrada, x="faixa_etaria", y=0, color="cor-raça",
 
                               title="Título",
 
                               labels={
-                                  'faixa etária': 'Faixa Etária',
+                                  'faixa_etaria': 'faixa_etaria',
                                   '0': 'Candidatos'
                               }
                               )
@@ -351,24 +374,24 @@ def update_output_div_08(value):
 )
 def update_output_div_09(value):
     if value == "todos os candidatos":
-        fig_09 = px.density_heatmap(df, x="faixa etária", y="residentes", marginal_x="histogram", marginal_y="violin",
+        fig_09 = px.density_heatmap(df, x="faixa_etaria", y="residentes", marginal_x="histogram", marginal_y="violin",
 
                                     title="Título",
 
                                     labels={
-                                        'faixa etária': 'Faixa Etária',
+                                        'faixa_etaria': 'faixa_etaria',
                                         'residentes': 'Residentes'
                                     }
                                     )
     else:
-        tabela_filtrada = df.loc[df['faixa etária'] == value, :]
-        fig_09 = px.density_heatmap(tabela_filtrada, x="faixa etária", y="residentes", marginal_x="histogram",
+        tabela_filtrada = df.loc[df['faixa_etaria'] == value, :]
+        fig_09 = px.density_heatmap(tabela_filtrada, x="faixa_etaria", y="residentes", marginal_x="histogram",
                                     marginal_y="violin",
 
                                     title="Título",
 
                                     labels={
-                                        'faixa etária': 'Faixa Etária',
+                                        'faixa_etaria': 'faixa_etaria',
                                         'residentes': 'Residentes'
                                     }
                                     )
@@ -381,24 +404,24 @@ def update_output_div_09(value):
 )
 def update_output_div_10(value):
     if value == "todos os candidatos":
-        fig_10 = px.density_heatmap(df, x="faixa etária", y="cor-raça", marginal_x="box", marginal_y="histogram",
+        fig_10 = px.density_heatmap(df, x="faixa_etaria", y="cor-raça", marginal_x="box", marginal_y="histogram",
 
                                     title="Título",
 
                                     labels={
-                                        'faixa etária': 'Faixa Etária',
+                                        'faixa_etaria': 'faixa_etaria',
                                         '0': 'Candidatos'
                                     }
                                     )
     else:
-        tabela_filtrada = df.loc[df['faixa etária'] == value, :]
-        fig_10 = px.density_heatmap(tabela_filtrada, x="faixa etária", y="cor-raça", marginal_x="box",
+        tabela_filtrada = df.loc[df['faixa_etaria'] == value, :]
+        fig_10 = px.density_heatmap(tabela_filtrada, x="faixa_etaria", y="cor-raça", marginal_x="box",
                                     marginal_y="histogram",
 
                                     title="Título",
 
                                     labels={
-                                        'faixa etária': 'Faixa Etária',
+                                        'faixa_etaria': 'faixa_etaria',
                                         '0': 'Candidatos'
                                     }
                                     )
@@ -411,14 +434,30 @@ def update_output_div_10(value):
 )
 def update_output_div_x(value):
     if value == "todos os candidatos":
-        fig = px.bar_polar(df, r="residentes", theta="faixa etária", color="sexo", template="plotly_dark",
+        fig = px.bar_polar(df, r="residentes", theta="faixa_etaria", color="sexo", template="plotly_dark",
                            color_discrete_sequence=px.colors.sequential.Plasma_r)
     else:
-        tabela_filtrada = df.loc[df['faixa etária'] == value, :]
-        fig = px.bar_polar(tabela_filtrada, r="residentes", theta="faixa etária", color="sexo", template="plotly_dark",
+        tabela_filtrada = df.loc[df['faixa_etaria'] == value, :]
+        fig = px.bar_polar(tabela_filtrada, r="residentes", theta="faixa_etaria", color="sexo", template="plotly_dark",
                            color_discrete_sequence=px.colors.sequential.Plasma_r)
 
     return fig
+
+
+@app.callback(
+    Output(component_id='grafico_13', component_property='figure'),
+    Input(component_id='situacao_13', component_property='value'),
+)
+def update_output_div_13(value):
+    return fig_13
+
+
+@app.callback(
+    Output(component_id='grafico_14', component_property='figure'),
+    Input(component_id='situacao_14', component_property='value'),
+)
+def update_output_div_14(value):
+    return fig_14
 
 
 if __name__ == '__main__':

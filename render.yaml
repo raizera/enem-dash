@@ -1,0 +1,17 @@
+services:
+  - type: web
+    plan: free
+    name: dash-app
+    runtime: python
+    repo: https://github.com/raizera/enem-dash.git
+    buildCommand: './build.sh'
+    startCommand: 'python -m gunicorn mysite.asgi:application -k uvicorn.workers.UvicornWorker'
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dash-app-db
+          property: connectionString
+
+databases:
+  - name: dash-app-db
+    plan: free
